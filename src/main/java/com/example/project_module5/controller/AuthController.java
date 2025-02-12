@@ -28,8 +28,8 @@ public class AuthController {
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/sign-up")
-    public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody @Valid SignUpRequest request) {
-        JwtAuthenticationResponse response = null;
+    public ResponseEntity signUp(@RequestBody @Valid SignUpRequest request) {
+        JwtAuthenticationResponse response;
         try {
             response = authenticationService.signUp(request);
         } catch (IllegalUsernameException | IllegalEmailException e) {
@@ -41,7 +41,7 @@ public class AuthController {
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/sign-in")
-    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody @Valid SignInRequest request) {
+    public ResponseEntity signIn(@RequestBody @Valid SignInRequest request) {
         JwtAuthenticationResponse response;
 
         try {
@@ -49,6 +49,6 @@ public class AuthController {
         } catch (UsernameNotFoundException e) {
            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<JwtAuthenticationResponse>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

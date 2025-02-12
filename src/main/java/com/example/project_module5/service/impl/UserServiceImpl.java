@@ -1,13 +1,11 @@
 package com.example.project_module5.service.impl;
 
 import com.example.project_module5.entity.User;
-import com.example.project_module5.enums.Role;
 import com.example.project_module5.exception.IllegalEmailException;
 import com.example.project_module5.exception.IllegalUsernameException;
 import com.example.project_module5.repository.UserRepository;
 import com.example.project_module5.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
