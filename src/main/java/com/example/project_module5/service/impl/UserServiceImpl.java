@@ -42,24 +42,12 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Проверка, что данный пользователь уже зареган
-     *
-     * @return
-     */
-    @Override
-    public boolean isExist(User user) {
-        return repository.exists(Example.of(user));
-    }
-
-
-    /**
      * Создание пользователя
      *
      * @return созданный пользователь
      */
     public User create(User user) {
         if (repository.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
             throw new IllegalUsernameException("Пользователь с таким именем уже существует");
         }
 

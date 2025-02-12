@@ -13,7 +13,6 @@ public interface UserService {
 
     List<User> findAll();
 
-    boolean isExist(User user);
 
     User create(User user);
 

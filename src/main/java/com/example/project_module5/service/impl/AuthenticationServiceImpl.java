@@ -51,14 +51,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return токен
      */
     public JwtAuthenticationResponse signIn(SignInRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
-        ));
+        String username = request.getUsername();
 
-        var user = userService
-                .userDetailsService()
-                .loadUserByUsername(request.getUsername());
+        var user = userService.getByUsername(username);
 
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);
