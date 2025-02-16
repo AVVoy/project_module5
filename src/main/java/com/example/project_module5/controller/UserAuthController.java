@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("user/auth")
 @RequiredArgsConstructor
 @Tag(name = "Аутентификация")
-public class AuthController {
+public class UserAuthController {
     private final AuthenticationService authenticationService;
 
     @Operation(summary = "Регистрация пользователя")

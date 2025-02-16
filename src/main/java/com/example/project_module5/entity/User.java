@@ -32,6 +32,9 @@ public class User implements UserDetails {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<HistoryRequestStock> historyRequestStocks;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
