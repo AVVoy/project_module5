@@ -1,5 +1,6 @@
 package com.example.project_module5.service.impl;
 
+import com.example.project_module5.dto.DataTickerDto;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.HistoryRequestStock;
 import com.example.project_module5.entity.Ticker;
@@ -29,23 +30,27 @@ public class TickerServiceImpl implements TickerService {
     }
 
     @Override
-    public List<TickerDto> findByUsernameAndTickerName(String username, String tickerName) {
+    public TickerDto findByUsernameAndTickerName(String username, String tickerName) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user;
-        Ticker ticker = tickerRepository.findByName(tickerName);
+        List<Ticker> tickers = tickerRepository.findAllByName(tickerName);
 
         if (userOptional.isPresent()) {
             user = userOptional.get();
 
-            HistoryRequestStock historyRequestStockByUser = historyRequestStockRepository.findByUser(user);
-            List<HistoryRequestStock> allByUserAndTicker = historyRequestStockRepository.findAllByUserAndTicker(user, ticker);
-
-
-            List<TickerDto> userTickers = allByUserAndTicker.stream()
-                    .map(HistoryRequestStock::getTicker)
-                    .map(ticker1 -> modelMapper.map(ticker1, TickerDto.class))
+            List<HistoryRequestStock> allUserTickers = tickers.stream()
+                    .map(ticker -> historyRequestStockRepository.findByUserAndTicker(user, ticker))
                     .toList();
-            return userTickers;
+
+            List<Ticker> userTickers = allUserTickers.stream()
+                    .map(HistoryRequestStock::getTicker)
+                    .toList();
+
+            List<DataTickerDto> dataTickerDto = userTickers.stream()
+                    .map(ticker -> modelMapper.map(ticker, DataTickerDto.class))
+                    .toList();
+
+            return TickerDto.builder().name(tickerName).data(dataTickerDto).build();
         }
         throw new IllegalTickerNameException("Не верно введено название акций");
     }

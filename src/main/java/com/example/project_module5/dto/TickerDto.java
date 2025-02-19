@@ -1,18 +1,21 @@
 package com.example.project_module5.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
+import java.util.List;
+
 
 @Data
+@AllArgsConstructor
 @RequiredArgsConstructor
+@Builder
 public class TickerDto {
-    private Long id;
     private String name;
-    private LocalDate date;
-    private Double startPrice;
-    private Double endPrice;
-    private Double highPrice;
-    private Double lowPrice;
+    @JsonProperty("data")
+    List<DataTickerDto> data;
+
 }

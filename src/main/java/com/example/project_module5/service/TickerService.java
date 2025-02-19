@@ -11,5 +11,5 @@ public interface TickerService {
 
 //    List<Ticker> findByTickerName(String ticker);
 
-    List<TickerDto> findByUsernameAndTickerName(String username, String ticker);
+    TickerDto findByUsernameAndTickerName(String username, String ticker);
 }
