@@ -1,22 +1,16 @@
 package com.example.project_module5.controller;
 
+import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.dto.TickerDto;
-import com.example.project_module5.entity.User;
 import com.example.project_module5.exception.IllegalTickerNameException;
-import com.example.project_module5.repository.UserRepository;
-import com.example.project_module5.service.JwtService;
 import com.example.project_module5.service.TickerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("user/stock")
@@ -29,16 +23,24 @@ public class UserTickerController {
 
     @Operation(summary = "Получение сохраненных акций")
     @GetMapping("/saved/{ticker}")
-    public ResponseEntity getStock(@PathVariable("ticker") String tickerName) {
-        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        User principal = (User) authentication.getPrincipal();
-        String username = principal.getUsername();
+    public ResponseEntity getUsersTickersByName(@PathVariable("ticker") String tickerName) {
         TickerDto userTickers;
         try {
-            userTickers = tickerService.findByUsernameAndTickerName(username, tickerName);
+            userTickers = tickerService.getUsersTickersByName(tickerName);
         } catch (IllegalTickerNameException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(userTickers, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Сохранение акций за 1 день")
+    @PostMapping("/save")
+    public ResponseEntity saveTicker(@RequestBody @Valid SaveTickerRequest saveTickerRequest) {
+        try {
+            tickerService.saveTicker(saveTickerRequest);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.project_module5.service;
 
+import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.Ticker;
 
@@ -11,5 +12,7 @@ public interface TickerService {
 
 //    List<Ticker> findByTickerName(String ticker);
 
-    TickerDto findByUsernameAndTickerName(String username, String ticker);
+    TickerDto getUsersTickersByName(String ticker);
+
+    void saveTicker(SaveTickerRequest saveTickerRequest);
 }

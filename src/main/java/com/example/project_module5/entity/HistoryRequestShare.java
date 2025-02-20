@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "history_request_stock")
-public class HistoryRequestStock {
+public class HistoryRequestShare {
 
     @EmbeddedId
     private UserTickerId userTickerId;
