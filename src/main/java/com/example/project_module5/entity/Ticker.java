@@ -41,5 +41,5 @@ public class Ticker {
     private Double lowPrice;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ticker")
-    private List<HistoryRequestShare> historyRequestShares;
+    private List<HistoryRequestTicker> historyRequestTickers;
 }

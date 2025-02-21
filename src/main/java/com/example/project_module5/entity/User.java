@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String email;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<HistoryRequestShare> historyRequestShares;
+    private List<HistoryRequestTicker> historyRequestTickers;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
