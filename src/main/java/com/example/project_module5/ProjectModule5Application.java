@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfigurati
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
-//create file application-jwtSecret.yaml with
+//create file application-secret.yaml with
 // token:
 //  signing:
 //    key:  your key

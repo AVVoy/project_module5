@@ -11,4 +11,6 @@ public interface TickerRepository extends JpaRepository<Ticker, Long> {
     List<Ticker> findAllByName(String tickerName);
 
     Ticker findByNameAndDate(String tickerName, LocalDate date);
+
+    List<Ticker> findByNameAndDateBetween(String tickerName, LocalDate startDate, LocalDate endDate);
 }

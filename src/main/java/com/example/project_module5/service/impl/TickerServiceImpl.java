@@ -2,6 +2,7 @@ package com.example.project_module5.service.impl;
 
 import com.example.project_module5.dto.DataTickerDto;
 import com.example.project_module5.dto.SaveTickerRequest;
+import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
@@ -9,17 +10,13 @@ import com.example.project_module5.entity.User;
 import com.example.project_module5.entity.UserTickerId;
 import com.example.project_module5.exception.IllegalTickerNameException;
 import com.example.project_module5.repository.TickerRepository;
-import com.example.project_module5.service.HistoryRequestTickerService;
-import com.example.project_module5.service.PolygonService;
-import com.example.project_module5.service.TickerService;
-import com.example.project_module5.service.UserService;
+import com.example.project_module5.service.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +26,7 @@ public class TickerServiceImpl implements TickerService {
     private final ModelMapper modelMapper;
     private final UserService userService;
     private final PolygonService polygonService;
+    private final DateService dateService;
 
     public List<Ticker> findAll() {
         return tickerRepository.findAll();
@@ -92,6 +90,27 @@ public class TickerServiceImpl implements TickerService {
         } else {
             polygonService.save(request);
         }
+    }
 
+    @Override
+    public void saveTickers(SaveTickersRequest request) {
+        String tickerName = request.getName();
+        LocalDate startDate = LocalDate.parse(request.getStart());
+        LocalDate endDate = LocalDate.parse(request.getEnd());
+
+        if (endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("Неправильно введены даты. Начало диапазона должно быть раньше конца!");
+        }
+
+        List<LocalDate> rangeDate = dateService.getRange(startDate, endDate);
+
+        for(LocalDate date : rangeDate) {
+            saveTicker(SaveTickerRequest
+                    .builder()
+                    .name(tickerName)
+                    .date(date.toString())
+                    .build()
+            );
+        }
     }
 }
