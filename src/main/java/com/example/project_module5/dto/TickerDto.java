@@ -14,8 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder
 public class TickerDto {
+
+    @JsonProperty("ticker")
     private String name;
-    @JsonProperty("data")
+
+    @JsonProperty("results")
     List<DataTickerDto> data;
 
 }

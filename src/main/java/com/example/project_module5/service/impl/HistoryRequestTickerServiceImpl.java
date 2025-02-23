@@ -3,6 +3,7 @@ package com.example.project_module5.service.impl;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.entity.User;
+import com.example.project_module5.entity.UserTickerId;
 import com.example.project_module5.repository.HistoryRequestTickerRepository;
 import com.example.project_module5.service.HistoryRequestTickerService;
 import com.example.project_module5.service.UserService;
@@ -24,12 +25,24 @@ public class HistoryRequestTickerServiceImpl implements HistoryRequestTickerServ
     }
 
     @Override
-    public HistoryRequestTicker findByUserAndTicker(User currentUser, Ticker ticker) {
+    public HistoryRequestTicker findByUserAndTicker(Ticker ticker) {
+        User currentUser = userService.getCurrentUser();
         return  repository.findByUserAndTicker(currentUser, ticker);
     }
 
     @Override
-    public void save(HistoryRequestTicker ticker) {
-        repository.save(ticker);
+    public void save(Ticker ticker) {
+        User currentUser = userService.getCurrentUser();
+        UserTickerId userTickerId = UserTickerId.builder()
+                .userId(currentUser.getId())
+                .tickerId(ticker.getId())
+                .build();
+        HistoryRequestTicker share = HistoryRequestTicker
+                .builder()
+                .userTickerId(userTickerId)
+                .user(currentUser)
+                .ticker(ticker)
+                .build();
+        repository.save(share);
     }
 }

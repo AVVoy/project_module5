@@ -11,10 +11,15 @@ import com.example.project_module5.entity.UserTickerId;
 import com.example.project_module5.exception.IllegalTickerNameException;
 import com.example.project_module5.repository.TickerRepository;
 import com.example.project_module5.service.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.security.Provider;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,6 +32,7 @@ public class TickerServiceImpl implements TickerService {
     private final UserService userService;
     private final PolygonService polygonService;
     private final DateService dateService;
+    private final ObjectMapper objectMapper;
 
     public List<Ticker> findAll() {
         return tickerRepository.findAll();
@@ -70,25 +76,25 @@ public class TickerServiceImpl implements TickerService {
         Ticker ticker = tickerRepository.findByNameAndDate(tickerName, date);
 
         if (ticker != null) {
-            User currentUser = userService.getCurrentUser();
-            HistoryRequestTicker userTicker = historyRequestTickerService.findByUserAndTicker(currentUser, ticker);
+            HistoryRequestTicker userTicker = historyRequestTickerService.findByUserAndTicker(ticker);
             if (userTicker != null) {
                 throw new IllegalArgumentException("Данные об акции уже существуют");
             } else {
-                UserTickerId userTickerId = UserTickerId.builder()
-                        .userId(currentUser.getId())
-                        .tickerId(ticker.getId())
-                        .build();
-                HistoryRequestTicker share = HistoryRequestTicker
-                        .builder()
-                        .userTickerId(userTickerId)
-                        .user(currentUser)
-                        .ticker(ticker)
-                        .build();
-                historyRequestTickerService.save(share);
+                historyRequestTickerService.save(ticker);
             }
         } else {
-            polygonService.save(request);
+            String polygonResponse = polygonService.findTicker(request);
+
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            TickerDto tickerDto;
+            try {
+                tickerDto = objectMapper.readValue(polygonResponse, TickerDto.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            save(tickerDto);
         }
     }
 
@@ -111,6 +117,21 @@ public class TickerServiceImpl implements TickerService {
                     .date(date.toString())
                     .build()
             );
+        }
+    }
+
+    @Override
+    @Transactional
+    public void save(TickerDto ticker) {
+        for (DataTickerDto data : ticker.getData()) {
+            Ticker savingTicker = modelMapper.map(data, Ticker.class);
+            savingTicker.setName(ticker.getName());
+            tickerRepository.save(savingTicker);
+
+            historyRequestTickerService.save(savingTicker);
+
+
+
         }
     }
 }

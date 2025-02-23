@@ -18,4 +18,6 @@ public interface TickerService {
     void saveTicker(SaveTickerRequest saveTickerRequest);
 
     void saveTickers(SaveTickersRequest saveTickersRequest);
+
+    void save(TickerDto ticker);
 }
