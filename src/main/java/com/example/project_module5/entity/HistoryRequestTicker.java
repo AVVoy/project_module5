@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "history_request_stock")
+@Table(name = "history_request_ticker")
 public class HistoryRequestTicker {
 
     @EmbeddedId

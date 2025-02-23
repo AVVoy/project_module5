@@ -10,6 +10,4 @@ import java.util.List;
 public interface HistoryRequestTickerRepository extends JpaRepository<HistoryRequestTicker, Long> {
     HistoryRequestTicker findByUserAndTicker(User user, Ticker ticker);
     List<HistoryRequestTicker> findAllByUser(User user);
-
-//    HistoryRequestStock findByUser(User user);
 }

@@ -40,6 +40,6 @@ public class Ticker {
     @Column(name = "low_price", nullable = false)
     private Double lowPrice;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ticker")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "ticker")
     private List<HistoryRequestTicker> historyRequestTickers;
 }

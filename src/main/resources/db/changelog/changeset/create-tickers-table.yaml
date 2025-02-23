@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-tickers
+      author: AVVoy
+      changes:
+        - createTable:
+            tableName: tickers
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_price
+                  type: numeric(6, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: high_price
+                  type: numeric(6, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: low_price
+                  type: numeric(6, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_price
+                  type: numeric(6, 2)
+                  constraints:
+                    nullable: false

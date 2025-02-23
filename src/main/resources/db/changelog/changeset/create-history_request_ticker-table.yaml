@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-history_request_ticker
+      author: AVVoy
+      changes:
+        - createTable:
+            tableName: history_request_ticker
+            columns:
+              - column:
+                  name: ticker_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName:  ticker_id
+                    referencedTableName: tickers
+                    referencedColumnNames: id
+
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: user_id
+                    referencedTableName: users
+                    referencedColumnNames: id
+
