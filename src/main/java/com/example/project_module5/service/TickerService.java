@@ -9,10 +9,6 @@ import java.util.List;
 
 public interface TickerService {
 
-    List<Ticker> findAll();
-
-//    List<Ticker> findByTickerName(String ticker);
-
     TickerDto getUsersTickersByName(String ticker);
 
     void saveTicker(SaveTickerRequest saveTickerRequest);

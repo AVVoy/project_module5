@@ -6,8 +6,6 @@ import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
-import com.example.project_module5.entity.User;
-import com.example.project_module5.entity.UserTickerId;
 import com.example.project_module5.exception.IllegalTickerNameException;
 import com.example.project_module5.repository.TickerRepository;
 import com.example.project_module5.service.*;
@@ -19,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.security.Provider;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,7 +26,6 @@ public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final HistoryRequestTickerService historyRequestTickerService;
     private final ModelMapper modelMapper;
-    private final UserService userService;
     private final PolygonService polygonService;
     private final DateService dateService;
     private final ObjectMapper objectMapper;
@@ -121,7 +117,6 @@ public class TickerServiceImpl implements TickerService {
     }
 
     @Override
-    @Transactional
     public void save(TickerDto ticker) {
         for (DataTickerDto data : ticker.getData()) {
             Ticker savingTicker = modelMapper.map(data, Ticker.class);
