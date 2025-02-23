@@ -8,11 +8,13 @@ import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.exception.IllegalTickerNameException;
 import com.example.project_module5.repository.TickerRepository;
-import com.example.project_module5.service.*;
+import com.example.project_module5.service.DateService;
+import com.example.project_module5.service.HistoryRequestTickerService;
+import com.example.project_module5.service.PolygonService;
+import com.example.project_module5.service.TickerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,10 +31,6 @@ public class TickerServiceImpl implements TickerService {
     private final PolygonService polygonService;
     private final DateService dateService;
     private final ObjectMapper objectMapper;
-
-    public List<Ticker> findAll() {
-        return tickerRepository.findAll();
-    }
 
     @Override
     public TickerDto getUsersTickersByName(String tickerName) {
