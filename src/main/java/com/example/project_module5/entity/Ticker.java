@@ -22,24 +22,24 @@ public class Ticker {
     @SequenceGenerator(name = "ticker_id_seq", sequenceName = "ticker_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column
     private String name;
 
-    @Column(name = "date", nullable = false)
+    @Column
     private LocalDate date;
 
-    @Column(name = "start_price", nullable = false)
+    @Column
     private Double startPrice;
 
-    @Column(name = "end_price", nullable = false)
+    @Column
     private Double endPrice;
 
-    @Column(name = "high_price", nullable = false)
+    @Column
     private Double highPrice;
 
-    @Column(name = "low_price", nullable = false)
+    @Column
     private Double lowPrice;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ticker")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "ticker")
     private List<HistoryRequestTicker> historyRequestTickers;
 }

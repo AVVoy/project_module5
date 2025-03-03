@@ -26,20 +26,20 @@ public class User implements UserDetails {
     @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column
     private String password;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column
     private String email;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
     private List<HistoryRequestTicker> historyRequestTickers;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column
     private Role role;
 
     @Override
