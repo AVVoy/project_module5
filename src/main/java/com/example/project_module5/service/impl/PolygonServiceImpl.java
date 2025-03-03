@@ -15,6 +15,7 @@ public class PolygonServiceImpl implements PolygonService {
 
     @Value("${polygon.signing.key}")
     private String polygonSigningKey;
+    private final RestClient restClient;
 
 
     @Override
@@ -29,15 +30,9 @@ public class PolygonServiceImpl implements PolygonService {
         end = now.isBefore(end) ? now : end;
         String endDate = end.toString();
 
-        var restClient = RestClient.create();
-
-
-        String uri = String.format(
-                "https://api.polygon.io/v2/aggs/ticker/%s/range/1/day/%s/%s?adjusted=true&sort=asc&apiKey=%s",
-                tickerName, startDate, endDate, polygonSigningKey);
-
         return restClient.get()
-                .uri(uri)
+                .uri("https://api.polygon.io/v2/aggs/ticker/{ticker}/range/1/day/{from}/{to}?adjusted=true&sort=asc&apiKey={key}",
+                        tickerName, startDate, endDate, polygonSigningKey)
                 .retrieve()
                 .body(String.class);
     }
