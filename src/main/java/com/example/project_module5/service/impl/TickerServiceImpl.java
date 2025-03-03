@@ -8,7 +8,6 @@ import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.exception.IllegalTickerNameException;
 import com.example.project_module5.repository.TickerRepository;
-import com.example.project_module5.service.DateService;
 import com.example.project_module5.service.HistoryRequestTickerService;
 import com.example.project_module5.service.PolygonService;
 import com.example.project_module5.service.TickerService;
@@ -29,7 +28,6 @@ public class TickerServiceImpl implements TickerService {
     private final HistoryRequestTickerService historyRequestTickerService;
     private final ModelMapper modelMapper;
     private final PolygonService polygonService;
-    private final DateService dateService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -102,7 +100,8 @@ public class TickerServiceImpl implements TickerService {
             throw new IllegalArgumentException("Неправильно введены даты. Начало диапазона должно быть раньше конца!");
         }
 
-        List<LocalDate> rangeDate = dateService.getRange(startDate, endDate);
+        List<LocalDate> rangeDate = startDate.datesUntil(endDate.plusDays(1))
+                .toList();
 
         for(LocalDate date : rangeDate) {
             saveTicker(SaveTickerRequest
