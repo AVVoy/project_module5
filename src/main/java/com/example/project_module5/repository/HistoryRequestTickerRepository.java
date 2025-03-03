@@ -11,5 +11,4 @@ public interface HistoryRequestTickerRepository extends JpaRepository<HistoryReq
     HistoryRequestTicker findByUserAndTicker(User user, Ticker ticker);
     List<HistoryRequestTicker> findAllByUser(User user);
 
-//    HistoryRequestStock findByUser(User user);
 }

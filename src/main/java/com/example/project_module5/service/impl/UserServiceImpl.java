@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
 
 
     /**
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
      * @return сохраненный пользователь
      */
     public User save(User user) {
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     /**
@@ -32,11 +32,11 @@ public class UserServiceImpl implements UserService {
      * @return созданный пользователь
      */
     public User create(User user) {
-        if (repository.existsByUsername(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalUsernameException("Пользователь с таким именем уже существует");
         }
 
-        if (repository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalEmailException("Пользователь с таким email уже существует");
         }
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
      * @return пользователь
      */
     public User getByUsername(String username) {
-        return repository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
     }

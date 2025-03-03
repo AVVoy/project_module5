@@ -16,18 +16,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HistoryRequestTickerServiceImpl implements HistoryRequestTickerService {
 
-    private final HistoryRequestTickerRepository repository;
+    private final HistoryRequestTickerRepository historyRequestTickerRepository;
     private final UserService userService;
 
     public List<HistoryRequestTicker> findAllTickersByCurrentUser() {
         User currentUser = userService.getCurrentUser();
-        return repository.findAllByUser(currentUser);
+        return historyRequestTickerRepository.findAllByUser(currentUser);
     }
 
     @Override
     public HistoryRequestTicker findByUserAndTicker(Ticker ticker) {
         User currentUser = userService.getCurrentUser();
-        return  repository.findByUserAndTicker(currentUser, ticker);
+        return  historyRequestTickerRepository.findByUserAndTicker(currentUser, ticker);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class HistoryRequestTickerServiceImpl implements HistoryRequestTickerServ
                 .user(currentUser)
                 .ticker(ticker)
                 .build();
-        repository.save(share);
+        historyRequestTickerRepository.save(share);
     }
 }
