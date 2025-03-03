@@ -7,11 +7,8 @@ import com.example.project_module5.repository.UserRepository;
 import com.example.project_module5.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,16 +24,6 @@ public class UserServiceImpl implements UserService {
      */
     public User save(User user) {
         return repository.save(user);
-    }
-
-    /**
-     * Поиск всех пользователей
-     *
-     * @return список пользователей
-     */
-    @Override
-    public List<User> findAll() {
-        return repository.findAll();
     }
 
     /**
@@ -65,17 +52,6 @@ public class UserServiceImpl implements UserService {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
-    }
-
-    /**
-     * Получение пользователя по имени пользователя
-     * <p>
-     * Нужен для Spring Security
-     *
-     * @return пользователь
-     */
-    public UserDetailsService userDetailsService() {
-        return this::getByUsername;
     }
 
     /**
