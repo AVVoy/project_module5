@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "tickers")
 public class Ticker {
     @Id
-    @Column(name = "id")
+    @Column
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticker_id_seq")
     @SequenceGenerator(name = "ticker_id_seq", sequenceName = "ticker_id_seq", allocationSize = 1)
     private Long id;
