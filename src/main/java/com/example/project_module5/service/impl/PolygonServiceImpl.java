@@ -21,7 +21,8 @@ public class PolygonServiceImpl implements PolygonService {
     public String findTicker(SaveTickerRequest request) {
 
         String tickerName = request.getName();
-        int year = Integer.parseInt(request.getDate().substring(0, 4));
+        int year = LocalDate.parse(request.getDate())
+                .getYear();
         String startDate = LocalDate.of(year, 1, 1).toString();
         LocalDate now = LocalDate.now();
         LocalDate end = LocalDate.of(year, 12, 31);
