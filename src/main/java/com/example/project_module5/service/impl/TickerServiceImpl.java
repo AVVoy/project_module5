@@ -24,7 +24,6 @@ public class TickerServiceImpl implements TickerService {
     private final HistoryRequestTickerService historyRequestTickerService;
     private final ModelMapper modelMapper;
     private final PolygonService polygonService;
-    private final ObjectMapper objectMapper;
 
     @Override
     public TickerDto getUsersTickersByName(String tickerName) {
