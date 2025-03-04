@@ -1,9 +1,6 @@
 package com.example.project_module5.service.impl;
 
-import com.example.project_module5.dto.DataTickerDto;
-import com.example.project_module5.dto.SaveTickerRequest;
-import com.example.project_module5.dto.SaveTickersRequest;
-import com.example.project_module5.dto.TickerDto;
+import com.example.project_module5.dto.*;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.exception.IllegalTickerNameException;
@@ -11,9 +8,8 @@ import com.example.project_module5.repository.TickerRepository;
 import com.example.project_module5.service.HistoryRequestTickerService;
 import com.example.project_module5.service.PolygonService;
 import com.example.project_module5.service.TickerService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -75,18 +71,9 @@ public class TickerServiceImpl implements TickerService {
                 historyRequestTickerService.save(ticker);
             }
         } else {
-            String polygonResponse = polygonService.findTicker(request);
+            DailyOpenCloseTicker polygonResponse = polygonService.findTicker(request);
 
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            TickerDto tickerDto;
-            try {
-                tickerDto = objectMapper.readValue(polygonResponse, TickerDto.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-
-            save(tickerDto);
+            save(polygonResponse);
         }
     }
 
@@ -113,17 +100,14 @@ public class TickerServiceImpl implements TickerService {
         }
     }
 
+
     @Override
-    public void save(TickerDto ticker) {
-        for (DataTickerDto data : ticker.getData()) {
-            Ticker savingTicker = modelMapper.map(data, Ticker.class);
-            savingTicker.setName(ticker.getName());
+    @Transactional
+    public void save(DailyOpenCloseTicker tickerDto) {
+        Ticker savingTicker = modelMapper.map(tickerDto, Ticker.class);
             tickerRepository.save(savingTicker);
 
             historyRequestTickerService.save(savingTicker);
 
-
-
-        }
     }
 }

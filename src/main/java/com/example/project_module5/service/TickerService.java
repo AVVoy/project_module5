@@ -1,5 +1,6 @@
 package com.example.project_module5.service;
 
+import com.example.project_module5.dto.DailyOpenCloseTicker;
 import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
@@ -12,5 +13,5 @@ public interface TickerService {
 
     void saveTickers(SaveTickersRequest saveTickersRequest);
 
-    void save(TickerDto ticker);
+    void save(DailyOpenCloseTicker ticker);
 }

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 @RequestMapping("user")
@@ -40,7 +41,16 @@ public class UserTickerController {
         try {
             tickerService.saveTicker(saveTickerRequest);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (HttpClientErrorException.NotFound e) {
+            return new ResponseEntity(
+                    String.format(
+                            "Данных по акциям %s за дату: %s не найдено!",
+                            saveTickerRequest.getName(),
+                            saveTickerRequest.getDate()
+                    ),
+                    HttpStatus.NOT_FOUND
+            );
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

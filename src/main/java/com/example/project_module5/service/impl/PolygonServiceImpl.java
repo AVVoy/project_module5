@@ -1,10 +1,12 @@
 package com.example.project_module5.service.impl;
 
+import com.example.project_module5.dto.DailyOpenCloseTicker;
 import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.service.PolygonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
@@ -19,21 +21,17 @@ public class PolygonServiceImpl implements PolygonService {
 
 
     @Override
-    public String findTicker(SaveTickerRequest request) {
+    public DailyOpenCloseTicker findTicker(SaveTickerRequest request) throws HttpClientErrorException.NotFound {
 
         String tickerName = request.getName();
-        int year = LocalDate.parse(request.getDate())
-                .getYear();
-        String startDate = LocalDate.of(year, 1, 1).toString();
-        LocalDate now = LocalDate.now();
-        LocalDate end = LocalDate.of(year, 12, 31);
-        end = now.isBefore(end) ? now : end;
-        String endDate = end.toString();
+        LocalDate startDate = LocalDate.parse(request.getDate());
+        DailyOpenCloseTicker ticker;
+        ticker = restClient.get()
 
-        return restClient.get()
-                .uri("https://api.polygon.io/v2/aggs/ticker/{ticker}/range/1/day/{from}/{to}?adjusted=true&sort=asc&apiKey={key}",
-                        tickerName, startDate, endDate, polygonSigningKey)
+                .uri("https://api.polygon.io/v1/open-close/{ticker}/{startDate}?adjusted=true&apiKey={key}",
+                        tickerName, startDate, polygonSigningKey)
                 .retrieve()
-                .body(String.class);
+                .body(DailyOpenCloseTicker.class);
+        return ticker;
     }
 }
