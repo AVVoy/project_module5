@@ -1,6 +1,9 @@
 package com.example.project_module5.service.impl;
 
-import com.example.project_module5.dto.*;
+import com.example.project_module5.dto.DataTickerDto;
+import com.example.project_module5.dto.SaveTickerRequest;
+import com.example.project_module5.dto.SaveTickersRequest;
+import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.exception.IllegalTickerNameException;
@@ -8,22 +11,29 @@ import com.example.project_module5.repository.TickerRepository;
 import com.example.project_module5.service.HistoryRequestTickerService;
 import com.example.project_module5.service.PolygonService;
 import com.example.project_module5.service.TickerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final HistoryRequestTickerService historyRequestTickerService;
     private final ModelMapper modelMapper;
     private final PolygonService polygonService;
+    private final TickerServiceImpl selfProxy;
+
+    public TickerServiceImpl(TickerRepository tickerRepository, HistoryRequestTickerService historyRequestTickerService, ModelMapper modelMapper, PolygonService polygonService, @Lazy TickerServiceImpl selfProxy) {
+        this.tickerRepository = tickerRepository;
+        this.historyRequestTickerService = historyRequestTickerService;
+        this.modelMapper = modelMapper;
+        this.polygonService = polygonService;
+        this.selfProxy = selfProxy;
+    }
 
     @Override
     public TickerDto getUsersTickersByName(String tickerName) {
@@ -60,19 +70,17 @@ public class TickerServiceImpl implements TickerService {
         String tickerName = request.getName();
         LocalDate date = LocalDate.parse(request.getDate());
 
-        Ticker ticker = tickerRepository.findByNameAndDate(tickerName, date);
+        Ticker ticker = tickerRepository.findTickerByNameAndDate(tickerName, date);
 
         if (ticker != null) {
-            HistoryRequestTicker userTicker = historyRequestTickerService.findByUserAndTicker(ticker);
-            if (userTicker != null) {
-                throw new IllegalArgumentException("Данные об акции уже существуют");
-            } else {
-                historyRequestTickerService.save(ticker);
+            HistoryRequestTicker userTicker = historyRequestTickerService.findUserHistoryRequestByTicker(ticker);
+            if (userTicker == null) {
+                historyRequestTickerService.saveHistoryRequestTicker(ticker);
             }
         } else {
-            DailyOpenCloseTicker polygonResponse = polygonService.findTicker(request);
+            Ticker savedNewTicker = polygonService.findTicker(request);
 
-            save(polygonResponse);
+            selfProxy.saveNewTicker(savedNewTicker);
         }
     }
 
@@ -89,7 +97,7 @@ public class TickerServiceImpl implements TickerService {
         List<LocalDate> rangeDate = startDate.datesUntil(endDate.plusDays(1))
                 .toList();
 
-        for(LocalDate date : rangeDate) {
+        for (LocalDate date : rangeDate) {
             saveTicker(SaveTickerRequest
                     .builder()
                     .name(tickerName)
@@ -99,14 +107,10 @@ public class TickerServiceImpl implements TickerService {
         }
     }
 
-
-    @Override
     @Transactional
-    public void save(DailyOpenCloseTicker tickerDto) {
-        Ticker savingTicker = modelMapper.map(tickerDto, Ticker.class);
-            tickerRepository.save(savingTicker);
-
-            historyRequestTickerService.save(savingTicker);
+    protected void saveNewTicker(Ticker savedTicker) {
+        tickerRepository.save(savedTicker);
+        historyRequestTickerService.saveHistoryRequestTicker(savedTicker);
 
     }
 }

@@ -2,8 +2,11 @@ package com.example.project_module5.service.impl;
 
 import com.example.project_module5.dto.DailyOpenCloseTicker;
 import com.example.project_module5.dto.SaveTickerRequest;
+import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.service.PolygonService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,20 +21,23 @@ public class PolygonServiceImpl implements PolygonService {
     @Value("${polygon.signing.key}")
     private String polygonSigningKey;
     private final RestClient restClient;
+    private final ModelMapper modelMapper;
 
 
     @Override
-    public DailyOpenCloseTicker findTicker(SaveTickerRequest request) throws HttpClientErrorException.NotFound {
+    @SneakyThrows
+    public Ticker findTicker(SaveTickerRequest request) throws HttpClientErrorException.NotFound {
 
         String tickerName = request.getName();
         LocalDate startDate = LocalDate.parse(request.getDate());
-        DailyOpenCloseTicker ticker;
-        ticker = restClient.get()
-
+        DailyOpenCloseTicker tickerDto;
+        tickerDto = restClient.get()
                 .uri("https://api.polygon.io/v1/open-close/{ticker}/{startDate}?adjusted=true&apiKey={key}",
                         tickerName, startDate, polygonSigningKey)
                 .retrieve()
                 .body(DailyOpenCloseTicker.class);
-        return ticker;
+
+
+        return modelMapper.map(tickerDto, Ticker.class);
     }
 }

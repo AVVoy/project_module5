@@ -25,24 +25,24 @@ public class HistoryRequestTickerServiceImpl implements HistoryRequestTickerServ
     }
 
     @Override
-    public HistoryRequestTicker findByUserAndTicker(Ticker ticker) {
+    public HistoryRequestTicker findUserHistoryRequestByTicker(Ticker ticker) {
         User currentUser = userService.getCurrentUser();
         return  historyRequestTickerRepository.findByUserAndTicker(currentUser, ticker);
     }
 
     @Override
-    public void save(Ticker ticker) {
+    public void saveHistoryRequestTicker(Ticker ticker) {
         User currentUser = userService.getCurrentUser();
         UserTickerId userTickerId = UserTickerId.builder()
                 .userId(currentUser.getId())
                 .tickerId(ticker.getId())
                 .build();
-        HistoryRequestTicker share = HistoryRequestTicker
+        HistoryRequestTicker historyRequestTicker = HistoryRequestTicker
                 .builder()
                 .userTickerId(userTickerId)
                 .user(currentUser)
                 .ticker(ticker)
                 .build();
-        historyRequestTickerRepository.save(share);
+        historyRequestTickerRepository.save(historyRequestTicker);
     }
 }

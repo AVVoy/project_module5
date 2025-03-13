@@ -37,17 +37,17 @@ public class UserTickerController {
 
     @Operation(summary = "Сохранение акций за 1 день")
     @PostMapping("/stock/save")
-    public ResponseEntity saveTicker(@RequestBody @Valid SaveTickerRequest saveTickerRequest) {
+    public ResponseEntity saveTicker(@RequestBody @Valid SaveTickerRequest savedTickerRequest) {
         try {
-            tickerService.saveTicker(saveTickerRequest);
+            tickerService.saveTicker(savedTickerRequest);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         } catch (HttpClientErrorException.NotFound e) {
             return new ResponseEntity(
                     String.format(
-                            "Данных по акциям %s за дату: %s не найдено!",
-                            saveTickerRequest.getName(),
-                            saveTickerRequest.getDate()
+                            "Данных по акциям %s за дату: %s не найдено! Проверьте имя акций, если оно верно, то в данный день биржа не работала!",
+                            savedTickerRequest.getName(),
+                            savedTickerRequest.getDate()
                     ),
                     HttpStatus.NOT_FOUND
             );

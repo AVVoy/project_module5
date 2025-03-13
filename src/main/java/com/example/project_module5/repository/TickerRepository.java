@@ -7,5 +7,5 @@ import java.time.LocalDate;
 
 public interface TickerRepository extends JpaRepository<Ticker, Long> {
 
-    Ticker findByNameAndDate(String tickerName, LocalDate date);
+    Ticker findTickerByNameAndDate(String tickerName, LocalDate date);
 }

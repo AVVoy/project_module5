@@ -1,8 +1,8 @@
 package com.example.project_module5.service;
 
-import com.example.project_module5.dto.DailyOpenCloseTicker;
 import com.example.project_module5.dto.SaveTickerRequest;
+import com.example.project_module5.entity.Ticker;
 
 public interface PolygonService {
-    DailyOpenCloseTicker findTicker(SaveTickerRequest request);
+    Ticker findTicker(SaveTickerRequest request);
 }
