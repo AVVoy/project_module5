@@ -28,7 +28,7 @@ public class UserTickerController {
     public ResponseEntity getUsersTickersByName(@PathVariable("ticker") String tickerName) {
         TickerDto userTickers;
         try {
-            userTickers = tickerService.getUsersTickersByName(tickerName);
+            userTickers = tickerService.getUserTickersByName(tickerName);
         } catch (IllegalTickerNameException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }

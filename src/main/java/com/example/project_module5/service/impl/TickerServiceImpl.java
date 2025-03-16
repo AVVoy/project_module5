@@ -36,24 +36,24 @@ public class TickerServiceImpl implements TickerService {
     }
 
     @Override
-    public TickerDto getUsersTickersByName(String tickerName) {
+    public TickerDto getUserTickersByName(String tickerName) {
 
-        List<HistoryRequestTicker> allUsersSavedTickers = historyRequestTickerService.findAllTickersByCurrentUser();
+        List<HistoryRequestTicker> allUserSavedTickers = historyRequestTickerService.findAllTickersByCurrentUser();
 
-        List<Ticker> usersSavedTickersByName = getTickersFromHistory(allUsersSavedTickers, tickerName);
+        List<Ticker> userSavedTickersByName = getTickersFromHistoryRequest(allUserSavedTickers, tickerName);
 
-        if (usersSavedTickersByName.isEmpty()) {
+        if (userSavedTickersByName.isEmpty()) {
             throw new IllegalTickerNameException("У пользователя нет сохраненных акций с таким именем!");
         }
 
-        List<DataTickerDto> dataTickerDto = mapDataTickerDto(usersSavedTickersByName);
+        List<DataTickerDto> dataTickerDto = mapDataTickerDto(userSavedTickersByName);
 
         return TickerDto.builder().name(tickerName).data(dataTickerDto).build();
 
     }
 
-    private List<Ticker> getTickersFromHistory(List<HistoryRequestTicker> allUsersSavedTickers, String tickerName) {
-        return allUsersSavedTickers.stream()
+    private List<Ticker> getTickersFromHistoryRequest(List<HistoryRequestTicker> allUserSavedTickers, String tickerName) {
+        return allUserSavedTickers.stream()
                 .map(HistoryRequestTicker::getTicker)
                 .filter(ticker -> ticker.getName().equals(tickerName))
                 .toList();
@@ -73,7 +73,7 @@ public class TickerServiceImpl implements TickerService {
         Ticker ticker = tickerRepository.findTickerByNameAndDate(tickerName, date);
 
         if (ticker != null) {
-            HistoryRequestTicker userTicker = historyRequestTickerService.findUserHistoryRequestByTicker(ticker);
+            HistoryRequestTicker userTicker = historyRequestTickerService.findHistoryRequestForCurrentUserByTicker(ticker);
             if (userTicker == null) {
                 historyRequestTickerService.saveHistoryRequestTicker(ticker);
             }
@@ -93,6 +93,8 @@ public class TickerServiceImpl implements TickerService {
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("Неправильно введены даты. Начало диапазона должно быть раньше конца!");
         }
+
+        //TODO: запрос за отрезок времени
 
         List<LocalDate> rangeDate = startDate.datesUntil(endDate.plusDays(1))
                 .toList();

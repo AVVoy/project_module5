@@ -6,7 +6,7 @@ import com.example.project_module5.dto.TickerDto;
 
 public interface TickerService {
 
-    TickerDto getUsersTickersByName(String ticker);
+    TickerDto getUserTickersByName(String ticker);
 
     void saveTicker(SaveTickerRequest saveTickerRequest);
 

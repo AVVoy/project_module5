@@ -8,7 +8,8 @@ import java.util.List;
 public interface HistoryRequestTickerService {
     List<HistoryRequestTicker> findAllTickersByCurrentUser();
 
-    HistoryRequestTicker findUserHistoryRequestByTicker(Ticker ticker);
+    HistoryRequestTicker findHistoryRequestForCurrentUserByTicker(Ticker ticker);
 
     void saveHistoryRequestTicker(Ticker ticker);
 }
+

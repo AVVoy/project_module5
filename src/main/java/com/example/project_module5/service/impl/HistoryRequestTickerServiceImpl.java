@@ -25,7 +25,7 @@ public class HistoryRequestTickerServiceImpl implements HistoryRequestTickerServ
     }
 
     @Override
-    public HistoryRequestTicker findUserHistoryRequestByTicker(Ticker ticker) {
+    public HistoryRequestTicker findHistoryRequestForCurrentUserByTicker(Ticker ticker) {
         User currentUser = userService.getCurrentUser();
         return  historyRequestTickerRepository.findByUserAndTicker(currentUser, ticker);
     }
