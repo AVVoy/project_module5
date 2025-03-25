@@ -6,7 +6,7 @@ import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
-import com.example.project_module5.exception.IllegalTickerNameException;
+import com.example.project_module5.exception.TickerNameNotFoundException;
 import com.example.project_module5.repository.TickerRepository;
 import com.example.project_module5.service.HistoryRequestTickerService;
 import com.example.project_module5.service.PolygonService;
@@ -43,7 +43,7 @@ public class TickerServiceImpl implements TickerService {
         List<Ticker> userSavedTickersByName = getTickersFromHistoryRequest(allUserSavedTickers, tickerName);
 
         if (userSavedTickersByName.isEmpty()) {
-            throw new IllegalTickerNameException("У пользователя нет сохраненных акций с таким именем!");
+            throw new TickerNameNotFoundException("У пользователя нет сохраненных акций с таким именем!");
         }
 
         List<DataTickerDto> dataTickerDto = mapDataTickerDto(userSavedTickersByName);

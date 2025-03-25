@@ -3,7 +3,7 @@ package com.example.project_module5.controller;
 import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
-import com.example.project_module5.exception.IllegalTickerNameException;
+import com.example.project_module5.exception.TickerNameNotFoundException;
 import com.example.project_module5.service.TickerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,44 +25,23 @@ public class UserTickerController {
 
     @Operation(summary = "Получение сохраненных акций")
     @GetMapping("/stock/saved/{ticker}")
-    public ResponseEntity getUsersTickersByName(@PathVariable("ticker") String tickerName) {
-        TickerDto userTickers;
-        try {
-            userTickers = tickerService.getUserTickersByName(tickerName);
-        } catch (IllegalTickerNameException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<TickerDto> getUsersTickersByName(@PathVariable("ticker") String tickerName) {
+        TickerDto userTickers = tickerService.getUserTickersByName(tickerName);
+
         return new ResponseEntity<>(userTickers, HttpStatus.OK);
     }
 
     @Operation(summary = "Сохранение акций за 1 день")
     @PostMapping("/stock/save")
     public ResponseEntity saveTicker(@RequestBody @Valid SaveTickerRequest savedTickerRequest) {
-        try {
-            tickerService.saveTicker(savedTickerRequest);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
-        } catch (HttpClientErrorException.NotFound e) {
-            return new ResponseEntity(
-                    String.format(
-                            "Данных по акциям %s за дату: %s не найдено! Проверьте имя акций, если оно верно, то в данный день биржа не работала!",
-                            savedTickerRequest.getName(),
-                            savedTickerRequest.getDate()
-                    ),
-                    HttpStatus.NOT_FOUND
-            );
-        }
+        tickerService.saveTicker(savedTickerRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(summary = "Сохранение акций за несколько дней")
     @PostMapping("/stocks/save")
     public ResponseEntity saveTickers(@RequestBody @Valid SaveTickersRequest saveTickersRequest) {
-        try {
-            tickerService.saveTickers(saveTickersRequest);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        tickerService.saveTickers(saveTickersRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
