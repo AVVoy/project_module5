@@ -3,7 +3,7 @@ package com.example.project_module5.controller;
 import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
-import com.example.project_module5.exception.TickerNameNotFoundException;
+import com.example.project_module5.entity.Ticker;
 import com.example.project_module5.service.TickerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 @Tag(name = "Работа с тикерами акций")
 
@@ -34,8 +33,8 @@ public class UserTickerController {
     @Operation(summary = "Сохранение акций за 1 день")
     @PostMapping("/stock/save")
     public ResponseEntity saveTicker(@RequestBody @Valid SaveTickerRequest savedTickerRequest) {
-        tickerService.saveTicker(savedTickerRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Ticker ticker = tickerService.saveTicker(savedTickerRequest);
+        return new ResponseEntity<>(ticker, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Сохранение акций за несколько дней")

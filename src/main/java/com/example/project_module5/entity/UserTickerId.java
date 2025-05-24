@@ -19,4 +19,20 @@ public class UserTickerId implements Serializable {
 
     @Column
     private Long tickerId;
+
+    @Override
+    public int hashCode() {
+        int result = (int) (31*userId+ tickerId);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        UserTickerId other = (UserTickerId) obj;
+        if (userId != other.userId) return false;
+        return tickerId == other.tickerId;
+    }
 }

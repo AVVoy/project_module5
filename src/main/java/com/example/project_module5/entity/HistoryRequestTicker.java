@@ -24,4 +24,6 @@ public class HistoryRequestTicker {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("tickerId")
     private Ticker ticker;
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.project_module5.controller;
 
-import com.example.project_module5.exception.TickerNameNotFoundException;
+import com.example.project_module5.exception.IllegalDateException;
+import com.example.project_module5.exception.TickerNotFoundException;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +12,14 @@ import org.springframework.web.client.HttpClientErrorException;
 @RestControllerAdvice
 public class ExceptionApiHandler {
 
-    @ExceptionHandler(TickerNameNotFoundException.class)
-    public ResponseEntity<ErrorMessage> notFoundException(TickerNameNotFoundException exception) {
+    @ExceptionHandler(TickerNotFoundException.class)
+    public ResponseEntity<ErrorMessage> notFoundException(TickerNotFoundException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(exception.getMessage()));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(IllegalDateException.class)
     public ResponseEntity<ErrorMessage> IllegalArgumentException(IllegalArgumentException exception) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
@@ -29,6 +30,6 @@ public class ExceptionApiHandler {
     public ResponseEntity<ErrorMessage> IllegalArgumentException(HttpClientErrorException.NotFound exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new ErrorMessage("Данных по акциям за эту дату не найдено! Проверьте имя акций, если оно верно, то в данный день биржа не работала!"));
+                .body(new ErrorMessage(exception.getMessage()));
     }
 }

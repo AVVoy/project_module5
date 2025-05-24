@@ -1,18 +1,18 @@
 package com.example.project_module5.service.impl;
 
-import com.example.project_module5.dto.DataTickerDto;
 import com.example.project_module5.dto.SaveTickerRequest;
 import com.example.project_module5.dto.SaveTickersRequest;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.HistoryRequestTicker;
 import com.example.project_module5.entity.Ticker;
-import com.example.project_module5.exception.TickerNameNotFoundException;
+import com.example.project_module5.exception.IllegalDateException;
+import com.example.project_module5.exception.TickerNotFoundException;
 import com.example.project_module5.repository.TickerRepository;
 import com.example.project_module5.service.HistoryRequestTickerService;
+import com.example.project_module5.service.Mapper;
 import com.example.project_module5.service.PolygonService;
 import com.example.project_module5.service.TickerService;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +23,14 @@ import java.util.List;
 public class TickerServiceImpl implements TickerService {
     private final TickerRepository tickerRepository;
     private final HistoryRequestTickerService historyRequestTickerService;
-    private final ModelMapper modelMapper;
+    private final Mapper mapper;
     private final PolygonService polygonService;
     private final TickerServiceImpl selfProxy;
 
-    public TickerServiceImpl(TickerRepository tickerRepository, HistoryRequestTickerService historyRequestTickerService, ModelMapper modelMapper, PolygonService polygonService, @Lazy TickerServiceImpl selfProxy) {
+    public TickerServiceImpl(TickerRepository tickerRepository, HistoryRequestTickerService historyRequestTickerService, Mapper mapper, PolygonService polygonService, @Lazy TickerServiceImpl selfProxy) {
         this.tickerRepository = tickerRepository;
         this.historyRequestTickerService = historyRequestTickerService;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
         this.polygonService = polygonService;
         this.selfProxy = selfProxy;
     }
@@ -40,33 +40,27 @@ public class TickerServiceImpl implements TickerService {
 
         List<HistoryRequestTicker> allUserSavedTickers = historyRequestTickerService.findAllTickersByCurrentUser();
 
-        List<Ticker> userSavedTickersByName = getTickersFromHistoryRequest(allUserSavedTickers, tickerName);
+        List<Ticker> userSavedTickersByName = getTickersByNameFromHistoryRequest(allUserSavedTickers, tickerName);
 
         if (userSavedTickersByName.isEmpty()) {
-            throw new TickerNameNotFoundException("У пользователя нет сохраненных акций с таким именем!");
+            throw new TickerNotFoundException("У пользователя нет сохраненных акций с таким именем!");
         }
 
-        List<DataTickerDto> dataTickerDto = mapDataTickerDto(userSavedTickersByName);
-
-        return TickerDto.builder().name(tickerName).data(dataTickerDto).build();
+        return mapper.mapTickersToTickerDto(userSavedTickersByName);
 
     }
 
-    private List<Ticker> getTickersFromHistoryRequest(List<HistoryRequestTicker> allUserSavedTickers, String tickerName) {
+    private List<Ticker> getTickersByNameFromHistoryRequest(List<HistoryRequestTicker> allUserSavedTickers, String tickerName) {
         return allUserSavedTickers.stream()
                 .map(HistoryRequestTicker::getTicker)
                 .filter(ticker -> ticker.getName().equals(tickerName))
                 .toList();
     }
 
-    private List<DataTickerDto> mapDataTickerDto(List<Ticker> userTickers) {
-        return userTickers.stream()
-                .map(ticker -> modelMapper.map(ticker, DataTickerDto.class))
-                .toList();
-    }
+
 
     @Override
-    public void saveTicker(SaveTickerRequest request) {
+    public Ticker saveTicker(SaveTickerRequest request) {
         String tickerName = request.getName();
         LocalDate date = LocalDate.parse(request.getDate());
 
@@ -78,10 +72,12 @@ public class TickerServiceImpl implements TickerService {
                 historyRequestTickerService.saveHistoryRequestTicker(ticker);
             }
         } else {
-            Ticker savedNewTicker = polygonService.findTicker(request);
+            ticker = polygonService.findTicker(request);
 
-            selfProxy.saveNewTicker(savedNewTicker);
+            selfProxy.saveNewTicker(ticker);
         }
+
+        return ticker;
     }
 
     @Override
@@ -91,7 +87,7 @@ public class TickerServiceImpl implements TickerService {
         LocalDate endDate = LocalDate.parse(request.getEnd());
 
         if (endDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("Неправильно введены даты. Начало диапазона должно быть раньше конца!");
+            throw new IllegalDateException("Неправильно введены даты. Начало диапазона должно быть раньше конца!");
         }
 
         //TODO: запрос за отрезок времени
