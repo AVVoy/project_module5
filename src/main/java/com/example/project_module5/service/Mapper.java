@@ -1,5 +1,6 @@
 package com.example.project_module5.service;
 
+import com.example.project_module5.dto.CustomBarTickers;
 import com.example.project_module5.dto.TickerDto;
 import com.example.project_module5.entity.Ticker;
 
@@ -10,4 +11,5 @@ public interface Mapper {
 
     public <D> D map(Object source, Class<D> destinationType);
 
+    List<Ticker> mapCustomBarTickersToTicker(CustomBarTickers tickersDto);
 }
