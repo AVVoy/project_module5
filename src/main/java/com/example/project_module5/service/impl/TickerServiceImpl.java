@@ -58,9 +58,8 @@ public class TickerServiceImpl implements TickerService {
     }
 
 
-
     @Override
-    public Ticker saveTicker(SaveTickerRequest request) {
+    public TickerDto saveTicker(SaveTickerRequest request) {
         String tickerName = request.getName();
         LocalDate date = LocalDate.parse(request.getDate());
 
@@ -69,7 +68,7 @@ public class TickerServiceImpl implements TickerService {
         if (ticker != null) {
             HistoryRequestTicker userTicker = historyRequestTickerService.findHistoryRequestForCurrentUserByTicker(ticker);
             if (userTicker == null) {
-                historyRequestTickerService.saveHistoryRequestTicker(ticker);
+                historyRequestTickerService.saveTickerInHistoryRequestForCurrentUser(ticker);
             }
         } else {
             ticker = polygonService.findTicker(request);
@@ -77,12 +76,11 @@ public class TickerServiceImpl implements TickerService {
             selfProxy.saveNewTicker(ticker);
         }
 
-        return ticker;
+        return mapper.mapTickersToTickerDto(List.of(ticker));
     }
 
     @Override
-    public void saveTickers(SaveTickersRequest request) {
-        String tickerName = request.getName();
+    public TickerDto saveTickers(SaveTickersRequest request) {
         LocalDate startDate = LocalDate.parse(request.getStart());
         LocalDate endDate = LocalDate.parse(request.getEnd());
 
@@ -90,25 +88,32 @@ public class TickerServiceImpl implements TickerService {
             throw new IllegalDateException("Неправильно введены даты. Начало диапазона должно быть раньше конца!");
         }
 
-        //TODO: запрос за отрезок времени
+        List<Ticker> tickers = polygonService.findTickers(request);
 
-        List<LocalDate> rangeDate = startDate.datesUntil(endDate.plusDays(1))
-                .toList();
+        selfProxy.saveCurrentTickers(tickers);
 
-        for (LocalDate date : rangeDate) {
-            saveTicker(SaveTickerRequest
-                    .builder()
-                    .name(tickerName)
-                    .date(date.toString())
-                    .build()
-            );
-        }
+        return mapper.mapTickersToTickerDto(tickers);
     }
 
     @Transactional
     protected void saveNewTicker(Ticker savedTicker) {
         tickerRepository.save(savedTicker);
-        historyRequestTickerService.saveHistoryRequestTicker(savedTicker);
+        historyRequestTickerService.saveTickerInHistoryRequestForCurrentUser(savedTicker);
 
+    }
+
+    @Transactional
+    protected void saveCurrentTickers(List<Ticker> tickers) {
+        for (Ticker savedTicker : tickers) {
+            Ticker checkTicker = tickerRepository.findTickerByNameAndDate(savedTicker.getName(), savedTicker.getDate());
+            if (checkTicker == null) {
+                selfProxy.saveNewTicker(savedTicker);
+            } else {
+                HistoryRequestTicker checkHistoryRequestTicker = historyRequestTickerService.findHistoryRequestForCurrentUserByTicker(checkTicker);
+                if (checkHistoryRequestTicker == null) {
+                    historyRequestTickerService.saveTickerInHistoryRequestForCurrentUser(checkTicker);
+                }
+            }
+        }
     }
 }

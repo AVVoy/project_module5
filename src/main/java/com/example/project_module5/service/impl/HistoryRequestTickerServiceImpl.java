@@ -31,7 +31,7 @@ public class HistoryRequestTickerServiceImpl implements HistoryRequestTickerServ
     }
 
     @Override
-    public void saveHistoryRequestTicker(Ticker ticker) {
+    public void saveTickerInHistoryRequestForCurrentUser(Ticker ticker) {
         User currentUser = userService.getCurrentUser();
         UserTickerId userTickerId = UserTickerId.builder()
                 .userId(currentUser.getId())

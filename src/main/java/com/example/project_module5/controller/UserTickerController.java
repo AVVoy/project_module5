@@ -32,15 +32,15 @@ public class UserTickerController {
 
     @Operation(summary = "Сохранение акций за 1 день")
     @PostMapping("/stock/save")
-    public ResponseEntity saveTicker(@RequestBody @Valid SaveTickerRequest savedTickerRequest) {
-        Ticker ticker = tickerService.saveTicker(savedTickerRequest);
+    public ResponseEntity<TickerDto> saveTicker(@RequestBody @Valid SaveTickerRequest savedTickerRequest) {
+        TickerDto ticker = tickerService.saveTicker(savedTickerRequest);
         return new ResponseEntity<>(ticker, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Сохранение акций за несколько дней")
     @PostMapping("/stocks/save")
-    public ResponseEntity saveTickers(@RequestBody @Valid SaveTickersRequest saveTickersRequest) {
-        tickerService.saveTickers(saveTickersRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<TickerDto> saveTickers(@RequestBody @Valid SaveTickersRequest saveTickersRequest) {
+        TickerDto tickers = tickerService.saveTickers(saveTickersRequest);
+        return new ResponseEntity<>(tickers, HttpStatus.CREATED);
     }
 }

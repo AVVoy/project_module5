@@ -10,6 +10,6 @@ public interface HistoryRequestTickerService {
 
     HistoryRequestTicker findHistoryRequestForCurrentUserByTicker(Ticker ticker);
 
-    void saveHistoryRequestTicker(Ticker ticker);
+    void saveTickerInHistoryRequestForCurrentUser(Ticker ticker);
 }
 

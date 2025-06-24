@@ -9,8 +9,8 @@ public interface TickerService {
 
     TickerDto getUserTickersByName(String ticker);
 
-    Ticker saveTicker(SaveTickerRequest saveTickerRequest);
+    TickerDto saveTicker(SaveTickerRequest saveTickerRequest);
 
-    void saveTickers(SaveTickersRequest saveTickersRequest);
+    TickerDto saveTickers(SaveTickersRequest saveTickersRequest);
 
 }
